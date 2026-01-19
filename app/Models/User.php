@@ -60,4 +60,9 @@ class User extends Authenticatable
                   $q->where('name', $permission);
                })->exists();
     }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
 }
