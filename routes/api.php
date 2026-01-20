@@ -2,7 +2,20 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\V1\OrderController;
 
-Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
-    return $request->user();
+/*
+|-----------------
+| API Version 1
+|-----------------
+*/
+Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
+        // User
+        Route::get('/user', fn (Request $request) => $request->user());
+
+        // Orders
+        Route::get('/orders', [OrderController::class, 'index']);
+        Route::post('/orders', [OrderController::class, 'store']);
+        Route::patch('/orders/{order}/status', [OrderController::class, 'updateStatus']);
+        Route::patch('/orders/{order}/cancel', [OrderController::class, 'cancel']);
 });
