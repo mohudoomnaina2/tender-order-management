@@ -79,6 +79,14 @@ Application will be available at:
 http://127.0.0.1:8000
 ```
 
+### Step 7: Queue Configuration
+```
+php artisan queue:work
+```
+
+## Verify Mail Logs(Local)
+'/storage/logs/laravel.log'
+
 ## API Documentation
 
 Postman collection for API testing.
