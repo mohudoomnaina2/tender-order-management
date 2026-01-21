@@ -9,6 +9,9 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use App\Events\OrderCancelled;
+use App\Events\OrderCreated;
+use App\Events\OrderShipped;
 
 class OrderService
 {
@@ -66,6 +69,8 @@ class OrderService
                 'changed_by'  => $user->id,
             ]);
 
+            event(new OrderCreated($order)); //Email Triggering
+
             return $order->load('items');
         });
     }
@@ -87,6 +92,15 @@ class OrderService
                 'to_status'   => $newStatus,
                 'changed_by'  => $user->id,
             ]);
+
+            //Email Triggering
+            if ($newStatus === 'shipped') {
+                event(new OrderShipped($order));
+            }
+
+            if ($newStatus === 'cancelled') {
+                event(new OrderCancelled($order));
+            }
 
             return $order->fresh();
         });
