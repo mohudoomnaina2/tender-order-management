@@ -13,7 +13,7 @@ class OrderPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermission('view_all_orders');
+        return $user->hasPermission('view_all_orders') || $user->hasPermission('view_own_orders');
     }
 
     /**
@@ -38,15 +38,43 @@ class OrderPolicy
      */
     public function update(User $user, Order $order, string $newStatus): bool
     {
+        // Check status text validation
+        if (! in_array($newStatus, config('order_status.valid', []), true)) {
+            return false;
+        }
+
+        // Cancel logic
+        if ($newStatus === 'cancelled') {
+            // Warehouse(Never cancel)
+            if ($user->hasRole('warehouse')) {
+                return false;
+            }
+
+            // Customer(Only pending)
+            if ($user->hasRole('customer')) {
+                return $order->status === 'pending';
+            }
+
+            // Admin & Order Manager(Any status)
+            return $user->hasRole('admin')
+                || $user->hasRole('order_manager');
+        }
+
+        // Warehouse update status(limited)
+        if ($user->hasRole('warehouse')) {
+            $allowedStatuses = config('order_status.warehouse_allowed', []);
+
+            return in_array($newStatus, $allowedStatuses, true)
+                && in_array(
+                    $newStatus,
+                    config('order_status.flow')[$order->status] ?? [],
+                    true
+                ) && $user->hasPermission('update_order_status');
+        }
+
         // Admin override
         if ($user->hasPermission('override_status')) {
             return true;
-        }
-
-        // Cancel allowed only when pending
-        if ($newStatus === 'cancelled') {
-            return $order->status === 'pending'
-                && $user->hasPermission('cancel_order');
         }
 
         // Validate status flow

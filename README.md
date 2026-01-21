@@ -62,10 +62,10 @@ This command will:
 
 | Role | Email | Password |
 |------|-------|----------|
-| Admin | admin@tender.com | admin123 |
-| Order Manager | manager@tender.com | admin123 |
-| Warehouse | warehouse@tender.com | admin123 |
-| Customer | customer@tender.com | admin123 |
+| Admin | admin@tender.com | password123 |
+| Order Manager | manager@tender.com | password123 |
+| Warehouse | warehouse@tender.com | password123 |
+| Customer | customer@tender.com | password123 |
 
 ---
 

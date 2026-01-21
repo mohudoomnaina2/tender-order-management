@@ -48,7 +48,10 @@ class RolePermissionSeeder extends Seeder
         );
 
         $warehouse->permissions()->sync(
-            Permission::where('name', 'ship_order')->pluck('id')
+            Permission::where('name', [
+                'ship_order',
+                'update_order_status',
+            ])->pluck('id')
         );
 
         $customer->permissions()->sync(

@@ -6,11 +6,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -33,6 +34,12 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    protected $appends = [
+        'role',
+        'roles',
+        'permissions',
+    ];
+
     /**
      * Get the attributes that should be cast.
      *
@@ -52,6 +59,38 @@ class User extends Authenticatable
                 Role::class,
                 'user_role'
         );
+    }
+
+    public function getRoleAttribute(): ?string
+    {
+        return $this->roles()
+            ->pluck('name')
+            ->first();
+    }
+
+    public function getRolesAttribute(): array
+    {
+        return $this->roles()
+            ->pluck('name')
+            ->toArray();
+    }
+
+    public function getPermissionsAttribute(): array
+    {
+        return $this->roles()
+            ->with('permissions')
+            ->get()
+            ->pluck('permissions')
+            ->flatten()
+            ->pluck('name')
+            ->unique()
+            ->values()
+            ->toArray();
+    }
+
+    public function hasRole(string $role): bool
+    {
+        return $this->roles()->where('name', $role)->exists();
     }
 
     public function hasPermission(string $permission): bool

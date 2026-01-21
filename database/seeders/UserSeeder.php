@@ -24,28 +24,28 @@ class UserSeeder extends Seeder
         $admin = User::create([
             'name' => 'Admin',
             'email' => 'admin@tender.com',
-            'password' => Hash::make('admin123'),
+            'password' => Hash::make('password123'),
         ]);
         $admin->roles()->attach($adminRole);
 
         $manager = User::create([
             'name' => 'Order Manager',
             'email' => 'manager@tender.com',
-            'password' => Hash::make('admin123'),
+            'password' => Hash::make('password123'),
         ]);
         $manager->roles()->attach($managerRole);
 
         $warehouse = User::create([
             'name' => 'Warehouse',
             'email' => 'warehouse@tender.com',
-            'password' => Hash::make('admin123'),
+            'password' => Hash::make('password123'),
         ]);
         $warehouse->roles()->attach($warehouseRole);
 
         $customer = User::create([
             'name' => 'Customer',
             'email' => 'customer@tender.com',
-            'password' => Hash::make('admin123'),
+            'password' => Hash::make('password123'),
         ]);
         $customer->roles()->attach($customerRole);
     }
